@@ -1,133 +1,134 @@
 # dotfiles
 
-My personal dotfiles managed with [chezmoi](https://www.chezmoi.io/).
+[chezmoi](https://www.chezmoi.io/) で管理している個人用の dotfiles です。
 
-## Managed Tools
+## 管理しているツール
 
-| Tool | Description |
-|------|-------------|
-| **Ghostty** | GPU-accelerated terminal emulator |
-| **tmux** | Terminal multiplexer with plugins |
-| **yazi** | Blazing fast terminal file manager |
-| **zsh** | Z shell configuration |
-| **Claude Code** | Anthropic's CLI for Claude |
+| ツール | 説明 |
+|--------|------|
+| **Ghostty** | GPU アクセラレーション対応ターミナル |
+| **tmux** | ターミナルマルチプレクサ（プラグイン込み） |
+| **yazi** | 爆速ターミナルファイルマネージャー |
+| **zsh** | Z シェル設定 |
+| **Claude Code** | Anthropic の Claude CLI ツール |
 
-## Quick Start
+## クイックスタート
 
-### New Machine Setup
+### 新しいマシンでのセットアップ
 
 ```bash
-# Install chezmoi and apply dotfiles
+# chezmoi をインストールして dotfiles を適用
 sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply hamusack
 ```
 
-Or step by step:
+または手動で：
 
 ```bash
-# 1. Install chezmoi
+# 1. chezmoi をインストール
 brew install chezmoi
 
-# 2. Initialize with this repo
+# 2. このリポジトリで初期化
 chezmoi init hamusack
 
-# 3. Set required environment variables (see below)
-# 4. Apply dotfiles
+# 3. 環境変数を設定（下記参照）
+
+# 4. dotfiles を適用
 chezmoi apply
 ```
 
-## Required Environment Variables
+## 必要な環境変数
 
-Before running `chezmoi apply`, set these environment variables in your shell profile (`~/.zshrc` or `~/.bashrc`):
+`chezmoi apply` を実行する前に、シェルプロファイル（`~/.zshrc` または `~/.bashrc`）に以下の環境変数を設定してください：
 
 ```bash
-# GitHub Personal Access Token (for GitHub Copilot MCP)
+# GitHub Personal Access Token（GitHub Copilot MCP 用）
 export GITHUB_PAT="your_github_pat_here"
 
-# Slack Bot Token (for Slack MCP)
+# Slack Bot Token（Slack MCP 用）
 export SLACK_BOT_TOKEN="xoxb-your-token-here"
 export SLACK_TEAM_ID="your-team-id"
 ```
 
-### How to get tokens
+### トークンの取得方法
 
 #### GitHub PAT
-1. Go to [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens)
-2. Generate a new token with required scopes
-3. Copy and set as `GITHUB_PAT`
+1. [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens) にアクセス
+2. 必要なスコープで新しいトークンを生成
+3. コピーして `GITHUB_PAT` に設定
 
 #### Slack Bot Token
-1. Go to [Slack API Apps](https://api.slack.com/apps)
-2. Create or select your app
-3. Navigate to "OAuth & Permissions"
-4. Copy the "Bot User OAuth Token" (`xoxb-...`)
-5. Set as `SLACK_BOT_TOKEN`
-6. Team ID can be found in your Slack workspace URL
+1. [Slack API Apps](https://api.slack.com/apps) にアクセス
+2. アプリを作成または選択
+3. 「OAuth & Permissions」に移動
+4. 「Bot User OAuth Token」（`xoxb-...`）をコピー
+5. `SLACK_BOT_TOKEN` に設定
+6. Team ID は Slack ワークスペースの URL から確認できます
 
-## File Structure
+## ファイル構成
 
 ```
 ~/.config/
 ├── ghostty/
-│   └── config           # Ghostty terminal settings
+│   └── config           # Ghostty ターミナル設定
 └── yazi/
-    ├── theme.toml       # Yazi theme (catppuccin-mocha)
-    └── flavors/         # Yazi color themes
+    ├── theme.toml       # Yazi テーマ（catppuccin-mocha）
+    └── flavors/         # Yazi カラーテーマ
 
 ~/.claude/
-├── CLAUDE.md            # Claude Code instructions
-├── settings.json        # Claude Code settings (templated)
-├── settings.local.json  # Permission settings
-├── hooks/               # Session hooks
-├── commands/            # Custom commands
-└── agents/              # Custom agents
+├── CLAUDE.md            # Claude Code の指示書
+├── settings.json        # Claude Code 設定（テンプレート）
+├── settings.local.json  # パーミッション設定
+├── hooks/               # セッションフック
+├── commands/            # カスタムコマンド
+└── agents/              # カスタムエージェント
 
-~/.tmux.conf             # tmux configuration
-~/.zshrc                 # Zsh configuration
+~/.tmux.conf             # tmux 設定
+~/.zshrc                 # Zsh 設定
 ```
 
-## Post-Installation
+## インストール後の作業
 
-### tmux Plugins
+### tmux プラグイン
 
-After applying dotfiles, install tmux plugins:
+dotfiles 適用後、tmux プラグインをインストール：
 
 ```bash
-# Start tmux
+# tmux を起動
 tmux
 
-# Install plugins (inside tmux)
-# Press: prefix + I (Ctrl+b, then Shift+I)
+# プラグインをインストール（tmux 内で）
+# prefix + I を押す（Ctrl+b → Shift+I）
 ```
 
 ### Ghostty
 
-Reload config after changes:
-- Press `Cmd + Shift + R`
+設定変更後のリロード：
+- `Cmd + Shift + R` を押す
 
-## Updating
+## 更新
 
 ```bash
-# Pull latest changes
+# 最新の変更を取得して適用
 chezmoi update
 
-# Or manually
+# または手動で
 chezmoi git pull
 chezmoi apply
 ```
 
-## Adding New Dotfiles
+## 新しい dotfile を追加する
 
 ```bash
-# Add a file to chezmoi management
+# ファイルを chezmoi 管理下に追加
 chezmoi add ~/.config/some/config
 
-# Edit managed file
+# 管理下のファイルを編集
 chezmoi edit ~/.config/some/config
 
-# Apply changes
+# 変更を適用
 chezmoi apply
 ```
 
-## License
+## ライセンス
 
 MIT
