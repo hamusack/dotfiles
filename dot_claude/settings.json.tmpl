@@ -49,6 +49,21 @@
           {
             "type": "command",
             "command": "~/.claude/hooks/obsidian-log.sh"
+          },
+          {
+            "type": "command",
+            "command": "echo '{\"cwd\": \"'\"$(pwd)\"'\", \"notification_type\": \"stop\"}' | ~/.claude/hooks/notify.sh"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notify.sh"
           }
         ]
       }
