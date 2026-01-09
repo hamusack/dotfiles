@@ -1,0 +1,101 @@
+alias snowsql=/Applications/SnowSQL.app/Contents/MacOS/snowsql
+export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+. "$HOME/.local/bin/env"
+
+# HSTR configuration - add this to ~/.zshrc
+alias hh=hstr                    # hh to be alias for hstr
+setopt histignorespace           # skip cmds w/ leading space from history
+export HSTR_CONFIG=hicolor       # get more colors
+bindkey -s "\C-r" "\C-a hstr -- \C-j"     # bind hstr to Ctrl-r (for Vi mode check doc)
+export HSTR_TIOCSTI=y
+
+
+### Added by Zinit's installer
+if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
+    print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
+    command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
+    command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" && \
+        print -P "%F{33} %F{34}Installation successful.%f%b" || \
+        print -P "%F{160} The clone has failed.%f%b"
+fi
+
+source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
+
+# Load a few important annexes, without Turbo
+# (this is currently required for annexes)
+zinit light-mode for \
+    zdharma-continuum/zinit-annex-as-monitor \
+    zdharma-continuum/zinit-annex-bin-gem-node \
+    zdharma-continuum/zinit-annex-patch-dl \
+    zdharma-continuum/zinit-annex-rust
+
+
+## zeno設定
+zinit ice lucid depth"1" blockf
+zinit light yuki-yano/zeno.zsh
+
+if [[ -n $ZENO_LOADED ]]; then
+  # ここに任意のZLEの記述を行う
+  bindkey ' '  zeno-auto-snippet
+  bindkey '^m' zeno-auto-snippet-and-accept-line
+  bindkey '^i' zeno-completion
+  bindkey '^g' zeno-ghq-cd
+  bindkey '^r' zeno-history-selection
+  bindkey '^x' zeno-insert-snippet
+fi
+
+# 「Ctr + r」にキーを設定
+bindkey '^r' zeno-history-selection
+
+### End of Zinit's installer chunk
+
+# bun completions
+[ -s "/Users/MatsumuraSatoshi/.bun/_bun" ] && source "/Users/MatsumuraSatoshi/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+export PATH="$HOME/.bun/bin:$PATH"
+
+alias claude="/Users/MatsumuraSatoshi/.claude/local/claude"
+export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
+export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/platform-tools:$PATH"
+export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
+export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/emulator:$PATH
+export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"
+export CPPFLAGS="-I/opt/homebrew/opt/openjdk@17/include"
+eval "$(mise activate zsh)"
+
+# Added by Antigravity
+export PATH="/Users/MatsumuraSatoshi/.antigravity/antigravity/bin:$PATH"
+eval "$(direnv hook zsh)"
+eval "$(direnv hook zsh)"
+
+# yazi - terminal file manager
+# 'y'コマンドでyaziを起動し、終了時にディレクトリ移動を反映
+function y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+	yazi "$@" --cwd-file="$tmp"
+	if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+		builtin cd -- "$cwd"
+	fi
+	rm -f -- "$tmp"
+}
+
+# zoxide - smarter cd command
+eval "$(zoxide init zsh)"
+
+# Neovim aliases
+alias vim="nvim"
+alias vi="nvim"
+alias v="nvim"

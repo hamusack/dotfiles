@@ -1,0 +1,15 @@
+# Ghostty Configuration
+# https://ghostty.org/docs/config
+
+# ===================
+# General Settings
+# ===================
+
+# 設定リロード
+keybind = cmd+shift+r=reload_config
+
+# Quick Terminal（ドロップダウンターミナル）をトグル
+keybind = global:cmd+alt+g=toggle_quick_terminal
+
+# macOSでOptionキーをAltとして使用
+macos-option-as-alt = true
