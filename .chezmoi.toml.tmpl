@@ -1,0 +1,23 @@
+# chezmoi configuration file
+# See: https://www.chezmoi.io/reference/configuration-file/
+
+[data]
+  # ユーザー情報（初回セットアップ時にプロンプトで聞かれる）
+  name = "{{ .chezmoi.username }}"
+  email = "{{ promptStringOnce . "email" "Email address" }}"
+
+  # GitHub設定
+  github_user = "{{ promptStringOnce . "github_user" "GitHub username" }}"
+
+[diff]
+  # 差分表示の設定
+  pager = "less -R"
+
+[edit]
+  # エディタの設定
+  command = "nvim"
+
+[git]
+  # git操作の自動化
+  autoCommit = false
+  autoPush = false

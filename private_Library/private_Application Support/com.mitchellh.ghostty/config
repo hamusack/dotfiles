@@ -1,0 +1,80 @@
+# ------------------------------------------------ #
+# Configuration Settings
+# ------------------------------------------------ #
+auto-update = check
+auto-update-channel = tip
+command = /bin/zsh
+
+# ------------------------------------------------ #
+# Theme / Color Settings
+# ------------------------------------------------ #
+theme = Arthur
+
+# ------------------------------------------------ #
+# Window Settings
+# ------------------------------------------------ #
+window-padding-x = 10
+window-padding-y = 2,4
+window-padding-balance = true
+# Open new windows in home directory
+window-inherit-working-directory = false 
+window-colorspace = display-p3
+resize-overlay = never
+
+# ------------------------------------------------ #
+# Background Settings
+# ------------------------------------------------ #
+background-opacity = 0.85
+background-blur = 20
+# background-blur = macos-glass-regular
+
+# ------------------------------------------------ #
+# Font Settings
+# ------------------------------------------------ #
+font-size =12
+# font-family = RobotoMono Nerd Font, Noto Sans Mono CJK JP
+font-family = Maple Mono
+font-feature = -calt
+font-feature = -dlig
+font-codepoint-map = U+3000-U+9FFF,U+FF00-U+FFEF=Hiragino Maru Gothic ProN
+
+# ------------------------------------------------ #
+# Cursor Settings
+# ------------------------------------------------ #
+cursor-style = underline
+cursor-style-blink = false
+cursor-color = #52AD70
+cursor-opacity = 0.8
+shell-integration-features = no-cursor
+
+# ------------------------------------------------ #
+# Keybindings
+# ------------------------------------------------ #
+keybind = ctrl+p=unbind
+keybind = ctrl+n=unbind
+keybind = shift+enter=text:\x1b\r
+keybind = ctrl+j=text:\x0a
+
+# tmux integration (Ghostty-style keybinds)
+keybind = super+d=text:\x02|
+keybind = super+shift+d=text:\x02-
+keybind = super+alt+arrow_left=text:\x02h
+keybind = super+alt+arrow_down=text:\x02j
+keybind = super+alt+arrow_up=text:\x02k
+keybind = super+alt+arrow_right=text:\x02l
+
+# ------------------------------------------------ #
+# Mouse Settings
+# ------------------------------------------------ #
+mouse-hide-while-typing = true
+mouse-scroll-multiplier = 2
+
+# ------------------------------------------------ #
+# macOS Specific Settings
+# ------------------------------------------------ #
+macos-icon = "xray"
+macos-icon-frame = "plastic"
+macos-window-buttons = "hidden"
+macos-titlebar-style = tabs
+macos-titlebar-proxy-icon = visible
+macos-icon-frame = plastic

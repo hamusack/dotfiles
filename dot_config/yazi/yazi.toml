@@ -1,0 +1,8 @@
+[mgr]
+# 3ペインの比率 [親, カレント, プレビュー]
+ratio = [1, 2, 3]
+
+[opener]
+edit = [
+  { run = 'nvim "$@"', block = true, for = "unix" }
+]

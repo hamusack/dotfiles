@@ -2,6 +2,12 @@
 
 [chezmoi](https://www.chezmoi.io/) で管理している個人用の dotfiles です。
 
+## 特徴
+
+- **ワンコマンドセットアップ** - 新しいマシンでも1コマンドで環境構築
+- **Brewfile 管理** - ソフトウェアも含めて完全に再現可能
+- **テンプレート機能** - ユーザー名やパスを動的に生成
+
 ## 管理しているツール
 
 | ツール | 説明 |
@@ -9,19 +15,26 @@
 | **Ghostty** | GPU アクセラレーション対応ターミナル |
 | **tmux** | ターミナルマルチプレクサ（プラグイン込み） |
 | **yazi** | 爆速ターミナルファイルマネージャー |
-| **zsh** | Z シェル設定 |
+| **zsh** | Z シェル設定（Zinit プラグイン管理） |
 | **Claude Code** | Anthropic の Claude CLI ツール |
+| **Neovim** | モダンな Vim |
 
 ## クイックスタート
 
-### 新しいマシンでのセットアップ
+### 新しいマシンでのセットアップ（推奨）
 
 ```bash
-# chezmoi をインストールして dotfiles を適用
+# これだけで Homebrew、全パッケージ、dotfiles が自動インストールされる！
 sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply hamusack
 ```
 
-または手動で：
+初回実行時に以下が自動でインストールされます：
+- Homebrew（未インストールの場合）
+- Brewfile に記載された全パッケージ
+- Zinit（Zsh プラグインマネージャー）
+- TPM（tmux プラグインマネージャー）
+
+### 手動セットアップ
 
 ```bash
 # 1. chezmoi をインストール
@@ -30,7 +43,8 @@ brew install chezmoi
 # 2. このリポジトリで初期化
 chezmoi init hamusack
 
-# 3. 環境変数を設定（下記参照）
+# 3. 差分を確認
+chezmoi diff
 
 # 4. dotfiles を適用
 chezmoi apply
@@ -67,23 +81,28 @@ export SLACK_TEAM_ID="your-team-id"
 ## ファイル構成
 
 ```
-~/.config/
-├── ghostty/
-│   └── config           # Ghostty ターミナル設定
-└── yazi/
-    ├── theme.toml       # Yazi テーマ（catppuccin-mocha）
-    └── flavors/         # Yazi カラーテーマ
-
-~/.claude/
-├── CLAUDE.md            # Claude Code の指示書
-├── settings.json        # Claude Code 設定（テンプレート）
-├── settings.local.json  # パーミッション設定
-├── hooks/               # セッションフック
-├── commands/            # カスタムコマンド
-└── agents/              # カスタムエージェント
-
-~/.tmux.conf             # tmux 設定
-~/.zshrc                 # Zsh 設定
+dotfiles/
+├── .chezmoi.toml.tmpl              # chezmoi 設定（テンプレート）
+├── Brewfile                         # Homebrew パッケージ一覧
+├── run_once_before_install-packages.sh.tmpl  # 初回セットアップスクリプト
+│
+├── dot_zshrc.tmpl                   # Zsh 設定（テンプレート）
+├── dot_tmux.conf                    # tmux 設定
+│
+├── dot_config/
+│   ├── ghostty/
+│   │   └── config                   # Ghostty ターミナル設定
+│   └── yazi/
+│       ├── theme.toml               # Yazi テーマ（catppuccin-mocha）
+│       └── flavors/                 # Yazi カラーテーマ
+│
+└── dot_claude/
+    ├── CLAUDE.md                    # Claude Code の指示書
+    ├── settings.json.tmpl           # Claude Code 設定（テンプレート）
+    ├── settings.local.json          # パーミッション設定
+    ├── hooks/                       # セッションフック
+    ├── commands/                    # カスタムコマンド
+    └── agents/                      # カスタムエージェント
 ```
 
 ## インストール後の作業
@@ -107,16 +126,7 @@ tmux
 
 ## 更新
 
-```bash
-# 最新の変更を取得して適用
-chezmoi update
-
-# または手動で
-chezmoi git pull
-chezmoi apply
-```
-
-## 新しい dotfile を追加する
+### 現在のマシンから設定を更新
 
 ```bash
 # ファイルを chezmoi 管理下に追加
@@ -127,6 +137,61 @@ chezmoi edit ~/.config/some/config
 
 # 変更を適用
 chezmoi apply
+
+# リポジトリにコミット
+chezmoi git add .
+chezmoi git commit -m "Update config"
+chezmoi git push
+```
+
+### 別マシンで最新を取得
+
+```bash
+# 最新の変更を取得して適用
+chezmoi update
+
+# または手動で
+chezmoi git pull
+chezmoi apply
+```
+
+## Brewfile の更新
+
+新しいパッケージをインストールした場合：
+
+```bash
+# 現在のパッケージ一覧を Brewfile に反映
+brew bundle dump --file=$(chezmoi source-path)/Brewfile --force
+
+# コミット
+chezmoi git add .
+chezmoi git commit -m "Update Brewfile"
+chezmoi git push
+```
+
+## トラブルシューティング
+
+### テンプレート変数が展開されない
+
+```bash
+# テンプレートの展開結果を確認
+chezmoi execute-template < $(chezmoi source-path)/dot_zshrc.tmpl
+```
+
+### 差分を確認したい
+
+```bash
+# 全ファイルの差分を確認
+chezmoi diff
+
+# 特定ファイルの差分
+chezmoi diff ~/.zshrc
+```
+
+### 適用前に dry-run
+
+```bash
+chezmoi apply --dry-run --verbose
 ```
 
 ## ライセンス

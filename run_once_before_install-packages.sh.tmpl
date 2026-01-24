@@ -1,0 +1,73 @@
+#!/bin/bash
+# chezmoi run_once script - 初回セットアップ時に自動実行される
+# ファイル名の "before" は chezmoi apply の前に実行されることを意味する
+
+set -e
+
+echo "🚀 dotfiles セットアップを開始します..."
+
+# ==============================================================================
+# Homebrew のインストール
+# ==============================================================================
+if ! command -v brew &> /dev/null; then
+    echo "📦 Homebrew をインストール中..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+    # Apple Silicon Mac の場合のパス設定
+    if [[ $(uname -m) == "arm64" ]]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    else
+        eval "$(/usr/local/bin/brew shellenv)"
+    fi
+else
+    echo "✅ Homebrew は既にインストール済み"
+fi
+
+# ==============================================================================
+# Brewfile からパッケージをインストール
+# ==============================================================================
+BREWFILE_PATH="{{ .chezmoi.sourceDir }}/Brewfile"
+
+if [[ -f "$BREWFILE_PATH" ]]; then
+    echo "📦 Brewfile からパッケージをインストール中..."
+    brew bundle --file="$BREWFILE_PATH" --no-lock
+else
+    echo "⚠️  Brewfile が見つかりません: $BREWFILE_PATH"
+fi
+
+# ==============================================================================
+# Zinit (Zsh プラグインマネージャー) のインストール
+# ==============================================================================
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+
+if [[ ! -d "$ZINIT_HOME" ]]; then
+    echo "📦 Zinit をインストール中..."
+    mkdir -p "$(dirname $ZINIT_HOME)"
+    git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+else
+    echo "✅ Zinit は既にインストール済み"
+fi
+
+# ==============================================================================
+# TPM (tmux プラグインマネージャー) のインストール
+# ==============================================================================
+TPM_PATH="${HOME}/.tmux/plugins/tpm"
+
+if [[ ! -d "$TPM_PATH" ]]; then
+    echo "📦 TPM (tmux plugin manager) をインストール中..."
+    git clone https://github.com/tmux-plugins/tpm "$TPM_PATH"
+else
+    echo "✅ TPM は既にインストール済み"
+fi
+
+# ==============================================================================
+# 完了メッセージ
+# ==============================================================================
+echo ""
+echo "🎉 セットアップが完了しました！"
+echo ""
+echo "📝 次のステップ:"
+echo "   1. シェルを再起動するか、'source ~/.zshrc' を実行"
+echo "   2. tmux を起動して、prefix + I でプラグインをインストール"
+echo "   3. 必要な環境変数を設定（README.md 参照）"
+echo ""
