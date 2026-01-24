@@ -2,7 +2,7 @@
 # chezmoi run_once script - 初回セットアップ時に自動実行される
 # ファイル名の "before" は chezmoi apply の前に実行されることを意味する
 
-set -e
+set -euo pipefail
 
 echo "🚀 dotfiles セットアップを開始します..."
 
@@ -12,16 +12,19 @@ echo "🚀 dotfiles セットアップを開始します..."
 if ! command -v brew &> /dev/null; then
     echo "📦 Homebrew をインストール中..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-    # Apple Silicon Mac の場合のパス設定
-    if [[ $(uname -m) == "arm64" ]]; then
-        eval "$(/opt/homebrew/bin/brew shellenv)"
-    else
-        eval "$(/usr/local/bin/brew shellenv)"
-    fi
-else
-    echo "✅ Homebrew は既にインストール済み"
 fi
+
+# Homebrew のパス設定（実際のパスをチェック）
+if [[ -x /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -x /usr/local/bin/brew ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+else
+    echo "⚠️  Homebrew が見つかりません"
+    exit 1
+fi
+
+echo "✅ Homebrew: $(brew --prefix)"
 
 # ==============================================================================
 # Brewfile からパッケージをインストール
@@ -36,13 +39,26 @@ else
 fi
 
 # ==============================================================================
+# VSCode 拡張のインストール（オプション）
+# ==============================================================================
+VSCODE_BREWFILE="{{ .chezmoi.sourceDir }}/Brewfile.vscode"
+
+if command -v code &> /dev/null && [[ -f "$VSCODE_BREWFILE" ]]; then
+    echo "📦 VSCode 拡張をインストール中..."
+    brew bundle --file="$VSCODE_BREWFILE" || echo "⚠️  一部の VSCode 拡張のインストールに失敗しました"
+else
+    echo "ℹ️  VSCode が見つからないため、拡張のインストールをスキップ"
+    echo "   後で実行: brew bundle --file=\$(chezmoi source-path)/Brewfile.vscode"
+fi
+
+# ==============================================================================
 # Zinit (Zsh プラグインマネージャー) のインストール
 # ==============================================================================
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 
 if [[ ! -d "$ZINIT_HOME" ]]; then
     echo "📦 Zinit をインストール中..."
-    mkdir -p "$(dirname $ZINIT_HOME)"
+    mkdir -p "$(dirname "$ZINIT_HOME")"
     git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
 else
     echo "✅ Zinit は既にインストール済み"
