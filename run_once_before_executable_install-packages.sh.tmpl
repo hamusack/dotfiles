@@ -30,7 +30,7 @@ BREWFILE_PATH="{{ .chezmoi.sourceDir }}/Brewfile"
 
 if [[ -f "$BREWFILE_PATH" ]]; then
     echo "📦 Brewfile からパッケージをインストール中..."
-    brew bundle --file="$BREWFILE_PATH" --no-lock
+    brew bundle --file="$BREWFILE_PATH"
 else
     echo "⚠️  Brewfile が見つかりません: $BREWFILE_PATH"
 fi
