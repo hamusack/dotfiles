@@ -33,7 +33,15 @@ BREWFILE_PATH="{{ .chezmoi.sourceDir }}/Brewfile"
 
 if [[ -f "$BREWFILE_PATH" ]]; then
     echo "📦 Brewfile からパッケージをインストール中..."
-    brew bundle --file="$BREWFILE_PATH"
+    # 一部のパッケージが失敗しても続行（環境依存の問題を許容）
+    if ! brew bundle --file="$BREWFILE_PATH"; then
+        echo ""
+        echo "⚠️  一部のパッケージのインストールに失敗しました"
+        echo "   よくある原因:"
+        echo "   - Xcode/Command Line Tools が古い → App Store で更新"
+        echo "   - Python のリンク競合 → brew link --overwrite python@3.xx"
+        echo ""
+    fi
 else
     echo "⚠️  Brewfile が見つかりません: $BREWFILE_PATH"
 fi

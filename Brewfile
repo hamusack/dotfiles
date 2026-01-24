@@ -1,4 +1,3 @@
-tap "dbt-labs/dbt"
 tap "hashicorp/tap"
 tap "shopify/shopify"
 brew "act"
@@ -46,7 +45,7 @@ brew "tree-sitter-cli"
 brew "uv"
 brew "yazi"
 brew "zoxide"
-brew "dbt-labs/dbt/dbt-snowflake"
+# dbt-snowflake は pip でインストール: pip install dbt-snowflake
 brew "hashicorp/tap/terraform", link: false
 brew "shopify/shopify/shopify-cli"
 cask "android-studio"
