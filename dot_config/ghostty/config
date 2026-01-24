@@ -11,5 +11,8 @@ keybind = cmd+shift+r=reload_config
 # Quick Terminal（ドロップダウンターミナル）をトグル
 keybind = global:cmd+alt+g=toggle_quick_terminal
 
+# 通常ウィンドウの表示/非表示をトグル
+keybind = global:cmd+alt+f=toggle_visibility
+
 # macOSでOptionキーをAltとして使用
 macos-option-as-alt = true
