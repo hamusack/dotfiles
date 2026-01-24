@@ -6,3 +6,15 @@ ratio = [1, 2, 3]
 edit = [
   { run = 'nvim "$@"', block = true, for = "unix" }
 ]
+markdown = [
+  { run = 'rich -m --pager "$@"', block = true, desc = "rich" },
+  { run = 'nvim "$@"', block = true, desc = "nvim" }
+]
+
+[[open.prepend_rules]]
+url = "*.md"
+use = "markdown"
+
+[[plugin.prepend_previewers]]
+url = "*.md"
+run = 'piper -- /opt/homebrew/bin/rich -m --max-width 200 "$1"'
