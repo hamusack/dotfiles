@@ -67,9 +67,16 @@ export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 export PATH="$HOME/.bun/bin:$PATH"
 
-# Claude Code - ローカルインストール版があればそちらを優先、なければnpm版を使用
-if [[ -x "{{ .chezmoi.homeDir }}/.claude/local/claude" ]]; then
-    alias claude="{{ .chezmoi.homeDir }}/.claude/local/claude"
+# Claude Code - 優先順位: ローカル版 > nvm版 > PATH
+if [[ -x "$HOME/.claude/local/claude" ]]; then
+    alias claude="$HOME/.claude/local/claude"
+elif [[ -d "$HOME/.nvm/versions/node" ]]; then
+    # nvm版を動的に探す（最新のnodeバージョンから）
+    _claude_nvm=$(find "$HOME/.nvm/versions/node" -name "claude" -path "*/bin/*" -type f 2>/dev/null | sort -rV | head -1)
+    if [[ -n "$_claude_nvm" && -x "$_claude_nvm" ]]; then
+        alias claude="$_claude_nvm"
+    fi
+    unset _claude_nvm
 fi
 alias claude_skip='claude --dangerously-skip-permissions'
 export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
