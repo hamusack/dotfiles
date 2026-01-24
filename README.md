@@ -50,6 +50,33 @@ chezmoi diff
 chezmoi apply
 ```
 
+### 既に chezmoi を使っている場合（再セットアップ）
+
+一度 `chezmoi apply` を実行すると、セットアップスクリプトは「実行済み」として記録されます。
+再度セットアップスクリプトを実行したい場合：
+
+```bash
+# 1. 最新の dotfiles を取得
+chezmoi update
+
+# 2. スクリプトの実行状態をリセット
+chezmoi state delete-bucket --bucket=scriptState
+
+# 3. 再度適用（セットアップスクリプトが実行される）
+chezmoi apply
+```
+
+### セットアップで何が起こるか
+
+`chezmoi apply` 実行時に `run_once_before_executable_install-packages.sh` が自動実行され：
+
+1. **Homebrew チェック** - 未インストールなら自動インストール
+2. **Brewfile インストール** - `brew bundle` で全パッケージをインストール
+3. **Zinit インストール** - Zsh プラグインマネージャー
+4. **TPM インストール** - tmux プラグインマネージャー
+
+完了後、ターミナルを再起動するか `source ~/.zshrc` を実行してください。
+
 ## 必要な環境変数
 
 `chezmoi apply` を実行する前に、シェルプロファイル（`~/.zshrc` または `~/.bashrc`）に以下の環境変数を設定してください：
@@ -84,7 +111,7 @@ export SLACK_TEAM_ID="your-team-id"
 dotfiles/
 ├── .chezmoi.toml.tmpl              # chezmoi 設定（テンプレート）
 ├── Brewfile                         # Homebrew パッケージ一覧
-├── run_once_before_install-packages.sh.tmpl  # 初回セットアップスクリプト
+├── run_once_before_executable_install-packages.sh.tmpl  # 初回セットアップスクリプト
 │
 ├── dot_zshrc.tmpl                   # Zsh 設定（テンプレート）
 ├── dot_tmux.conf                    # tmux 設定
@@ -171,6 +198,26 @@ chezmoi git push
 
 ## トラブルシューティング
 
+### セットアップスクリプトが実行されない
+
+スクリプトが「実行済み」として記録されている可能性があります：
+
+```bash
+# スクリプトの実行状態をリセット
+chezmoi state delete-bucket --bucket=scriptState
+
+# 再度適用
+chezmoi apply
+```
+
+### Homebrew パッケージがインストールされない
+
+手動で Brewfile からインストール：
+
+```bash
+brew bundle --file=$(chezmoi source-path)/Brewfile
+```
+
 ### テンプレート変数が展開されない
 
 ```bash
@@ -192,6 +239,16 @@ chezmoi diff ~/.zshrc
 
 ```bash
 chezmoi apply --dry-run --verbose
+```
+
+### chezmoi の設定をリセットしたい
+
+```bash
+# 設定ファイルを再生成
+chezmoi init hamusack
+
+# 全状態をリセット（注意: 全てリセットされる）
+chezmoi state reset
 ```
 
 ## ライセンス
